@@ -26,7 +26,7 @@ public class ConsoleApplication {
                     ";\n3)Create user" +
                     ";\n4)Edit user" +
                     ";\n5)Delete user" +
-                    ";\n6)Save and exit;" +
+                    ";\n6)Save and Quit;" +
                     "\n=================================\n");
             requestNumber = scanner.nextInt();
             switch (requestNumber) {
