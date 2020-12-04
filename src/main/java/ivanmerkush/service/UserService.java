@@ -1,4 +1,6 @@
-package ivanmerkush;
+package ivanmerkush.service;
+
+import ivanmerkush.model.User;
 
 import java.util.List;
 

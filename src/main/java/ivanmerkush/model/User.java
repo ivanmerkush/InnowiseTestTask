@@ -1,4 +1,4 @@
-package ivanmerkush;
+package ivanmerkush.model;
 
 import java.util.List;
 

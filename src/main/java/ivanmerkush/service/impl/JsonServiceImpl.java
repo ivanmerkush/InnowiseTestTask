@@ -1,8 +1,10 @@
-package ivanmerkush;
+package ivanmerkush.service.impl;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import ivanmerkush.model.User;
+import ivanmerkush.service.JsonService;
 
 import java.io.File;
 import java.io.FileReader;
@@ -12,16 +14,17 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Scanner;
 
-public class JsonService {
-    private Gson gson;
-    private File file;
-    private Type users;
+public class JsonServiceImpl implements JsonService {
+    private final Gson gson;
+    private final File file;
+    private final Type users;
 
-    public JsonService() {
+    public JsonServiceImpl() {
         this.gson = new GsonBuilder().setPrettyPrinting().create();
         this.file = new File("./src/main/resources/users.json");
         this.users = new TypeToken<List<User>>(){}.getType();
     }
+    @Override
     public void write(List<User> users) {
         String jsonUsers = gson.toJson(users);
         try {
@@ -33,9 +36,9 @@ public class JsonService {
             e.printStackTrace();
         }
     }
-
+    @Override
     public List<User> read() {
-        StringBuilder str = new StringBuilder("");
+        StringBuilder str = new StringBuilder();
         try (Scanner scanner = new Scanner(new FileReader(file))) {
             while (scanner.hasNextLine()) {
                 str.append(scanner.nextLine());

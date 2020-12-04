@@ -1,6 +1,8 @@
 package ivanmerkush;
 
-import ivanmerkush.impl.UserServiceImpl;
+import ivanmerkush.model.User;
+import ivanmerkush.service.UserService;
+import ivanmerkush.service.impl.UserServiceImpl;
 
 import java.util.List;
 import java.util.Scanner;
@@ -14,11 +16,15 @@ public class ConsoleApplication {
 
 
     public static void main(String[] args) {
-        int requestNumber;
-        Scanner scanner = new Scanner(System.in);
-        boolean isClosed = false;
         System.out.println("Welcome!");
-        while(!isClosed) {
+        Scanner scanner = new Scanner(System.in);
+        handlingRequests(scanner);
+        System.exit(0);
+    }
+
+    private static void handlingRequests(Scanner scanner) {
+            sc : while(true) {
+
             System.out.println("=================================\n" +
                     "Available actions: " +
                     "\n1)Get all users" +
@@ -28,7 +34,8 @@ public class ConsoleApplication {
                     ";\n5)Delete user" +
                     ";\n6)Save and Quit;" +
                     "\n=================================\n");
-            requestNumber = scanner.nextInt();
+            int requestNumber = Integer.parseInt(scanner.nextLine());
+
             switch (requestNumber) {
                 case 1:
                     System.out.println("All user's names and surnames:");
@@ -39,44 +46,39 @@ public class ConsoleApplication {
                     break;
                 case 2:
                     User user = userService.getUserInfo();
-                    if (user == null) {
-                        System.out.println("This user doesn't exist");
-                    } else {
-                        System.out.println("Here is user's info:\n"
-                                + user);
-                    }
+                    checkResult(user);
                     break;
                 case 3:
                     user = userService.createUser();
-                    System.out.println("The new user was created:\n"
-                            + user);
+                    checkResult(user);
                     break;
                 case 4:
                     user = userService.editUser();
-                    if (user == null) {
-                        System.out.println("This user doesn't exist");
-                    } else {
-                        System.out.println("The user was edited:\n"
-                                + user);
-                    }
+                    checkResult(user);
                     break;
                 case 5:
                     userService.deleteUser();
                     System.out.println("The user was deleted.");
                     break;
                 case 6:
-                    isClosed = true;
-                    scanner.close();
                     System.out.println("Saving users to file.");
                     userService.saveUsers();
+                    scanner.close();
                     System.out.println("Closing. Bye");
-                    break;
+                    break sc;
                 default:
                     System.out.println("Wrong request. Try again.");
-                    break;
             }
         }
-        System.exit(0);
+    }
+
+    private static void checkResult(User user) {
+        if (user == null) {
+            System.out.println("This user doesn't exist");
+        } else {
+            System.out.println("Here is user's info:\n"
+                    + user);
+        }
     }
 
 }

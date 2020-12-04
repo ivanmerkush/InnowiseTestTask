@@ -1,12 +1,11 @@
-package ivanmerkush.impl;
+package ivanmerkush.service.impl;
 
-import ivanmerkush.JsonService;
-import ivanmerkush.User;
-import ivanmerkush.UserService;
+import ivanmerkush.model.User;
+import ivanmerkush.service.JsonService;
+import ivanmerkush.service.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,7 +21,7 @@ public class UserServiceImpl implements UserService {
     private final Pattern phonePattern;
     public UserServiceImpl() {
         scanner = new Scanner(System.in);
-        jsonService = new JsonService();
+        jsonService = new JsonServiceImpl();
         users = jsonService.read();
         emailPattern = Pattern.compile("^(.+)+@(.+)+\\.(.+)$");
         phonePattern = Pattern.compile("^(375)+\\d{9}");
@@ -40,18 +39,12 @@ public class UserServiceImpl implements UserService {
         List<String> roles;
         List<String> phoneNumbers;
 
-        System.out.println("Enter name: ");
+        System.out.println("Enter name:");
         name = scanner.nextLine();
-        System.out.println("Enter surname: ");
+        System.out.println("Enter surname:");
         surname = scanner.nextLine();
-        System.out.println("Enter new email: ");
-        email = scanner.nextLine();
-        Matcher emailMatcher = emailPattern.matcher(email);
-        while (!emailMatcher.matches()) {
-            System.out.println("Wrong email. Try again: ");
-            email = scanner.nextLine();
-            emailMatcher = emailPattern.matcher(email);
-        }
+        System.out.println("Enter new email:");
+        email = inputEmail();
         roles = inputRoles();
         phoneNumbers = inputPhones();
         User user = new User(name, surname, email, roles,phoneNumbers);
@@ -71,41 +64,7 @@ public class UserServiceImpl implements UserService {
         if (user != null) {
             System.out.println(user.toString());
             System.out.println("What would you like to change?");
-            int number = Integer.parseInt(scanner.nextLine());
-            switch (number) {
-                case 1:
-                    System.out.println("Enter new name:");
-                    String newName = scanner.nextLine();
-                    user.setName(newName);
-                    break;
-                case 2:
-                    System.out.println("Enter new surname:");
-                    String newSurname = scanner.nextLine();
-                    user.setSurname(newSurname);
-                    break;
-                case 3:
-                    System.out.println("Enter new email: ");
-                    String email = scanner.nextLine();
-                    Matcher emailMatcher = emailPattern.matcher(email);
-                    while (!emailMatcher.matches()) {
-                        System.out.println("Wrong email. Try again:");
-                        email = scanner.nextLine();
-                        emailMatcher = emailPattern.matcher(email);
-                    }
-                    user.setEmail(email);
-                    break;
-                case 4:
-                    List<String> roles = inputRoles();
-                    user.setRoles(roles);
-                    break;
-                case 5:
-                    List<String> phones = inputPhones();
-                    user.setPhoneNumbers(phones);
-                    break;
-                default:
-                    System.out.println("Nothing will change.");
-                    break;
-            }
+            changingValues(user);
         }
         return user;
     }
@@ -144,6 +103,46 @@ public class UserServiceImpl implements UserService {
         jsonService.write(users);
     }
 
+    private void changingValues(User user) {
+        int number = Integer.parseInt(scanner.nextLine());
+        switch (number) {
+            case 1:
+                System.out.println("Enter new name:");
+                String name = scanner.nextLine();
+                user.setName(name);
+                break;
+            case 2:
+                System.out.println("Enter new surname:");
+                String surname = scanner.nextLine();
+                user.setSurname(surname);
+                break;
+            case 3:
+                System.out.println("Enter new email: ");
+                user.setEmail(inputEmail());
+                break;
+            case 4:
+                List<String> roles = inputRoles();
+                user.setRoles(roles);
+                break;
+            case 5:
+                List<String> phones = inputPhones();
+                user.setPhoneNumbers(phones);
+                break;
+            default:
+                System.out.println("Nothing will change.");
+                break;
+        }
+    }
+
+    private String inputEmail() {
+        Matcher emailMatcher = emailPattern.matcher(scanner.nextLine());
+        while (!emailMatcher.matches()) {
+            System.out.println("Wrong email. Try again:");
+            emailMatcher = emailPattern.matcher(scanner.nextLine());
+        }
+        return emailMatcher.group();
+    }
+
     private List<String> inputRoles() {
         List<String> roles = new ArrayList<>();
         System.out.println("Enter new roles. Type \"Enough\" to stop:");
@@ -151,7 +150,7 @@ public class UserServiceImpl implements UserService {
             String line = scanner.nextLine().toLowerCase();
             if(line.equals("enough")) {
                 if(i == 0) {
-                    System.out.println("There should be at least 1 role. Type role:");
+                    System.out.println("There should be at least 1 value. Type again:");
                 }
                 else {
                     break;
@@ -171,7 +170,7 @@ public class UserServiceImpl implements UserService {
             String line = scanner.nextLine().toLowerCase();
             if(line.equals("enough")) {
                 if(i == 0) {
-                    System.out.println("There should be at least 1 phone number. Type number:");
+                    System.out.println("There should be at least 1 value. Type again:");
                 }
                 else {
                     break;
@@ -189,5 +188,7 @@ public class UserServiceImpl implements UserService {
         }
         return phoneNumbers;
     }
+
+
 
 }
