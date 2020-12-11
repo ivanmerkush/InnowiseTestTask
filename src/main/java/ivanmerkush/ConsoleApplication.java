@@ -19,7 +19,6 @@ public class ConsoleApplication {
     public static void main(String[] args) {
         System.out.println("Welcome!");
         Scanner scanner = new Scanner(System.in);
-        userService.setFileService(FileServiceImpl.getInstance());
         handlingRequests(scanner);
         System.exit(0);
     }

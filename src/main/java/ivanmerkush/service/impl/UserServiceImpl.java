@@ -23,6 +23,7 @@ public class UserServiceImpl implements UserService {
     private final Pattern phonePattern;
     private UserServiceImpl() {
         users = new ArrayList<>();
+        setFileService(FileServiceImpl.getInstance());
         scanner = new Scanner(System.in);
         emailPattern = Pattern.compile("^(.+)+@(.+)+\\.(.+)$");
         phonePattern = Pattern.compile("^(375)+\\d{9}");
@@ -120,7 +121,6 @@ public class UserServiceImpl implements UserService {
         users.addAll(fileService.read());
     }
 
-    @Override
     public void setFileService(FileService fileService) {
         this.fileService = fileService;
     }

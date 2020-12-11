@@ -12,5 +12,4 @@ public interface UserService {
     List<String> getAllUsers();
     void saveUsers();
     void loadUsers();
-    void setFileService(FileService fileService);
 }
