@@ -2,6 +2,7 @@ package ivanmerkush;
 
 import ivanmerkush.model.User;
 import ivanmerkush.service.UserService;
+import ivanmerkush.service.impl.FileServiceImpl;
 import ivanmerkush.service.impl.UserServiceImpl;
 
 import java.util.List;
@@ -11,13 +12,14 @@ public class ConsoleApplication {
     private static final UserService userService;
 
     static {
-        userService = new UserServiceImpl();
+        userService = UserServiceImpl.getInstance();
     }
 
 
     public static void main(String[] args) {
         System.out.println("Welcome!");
         Scanner scanner = new Scanner(System.in);
+        userService.setFileService(FileServiceImpl.getInstance());
         handlingRequests(scanner);
         System.exit(0);
     }
@@ -27,16 +29,16 @@ public class ConsoleApplication {
 
             System.out.println("=================================\n" +
                     "Available actions: " +
-                    "\n1)Get all users" +
-                    ";\n2)Get user's info" +
-                    ";\n3)Create user" +
-                    ";\n4)Edit user" +
-                    ";\n5)Delete user" +
-                    ";\n6)Save and Quit;" +
+                    "\n1)Get all users;" +
+                    "\n2)Get user's info;" +
+                    "\n3)Create user;" +
+                    "\n4)Edit user;" +
+                    "\n5)Delete user;" +
+                    "\n6)Load users;" +
+                    "\n7)Save and Quit;" +
                     "\n=================================\n");
-            int requestNumber = Integer.parseInt(scanner.nextLine());
 
-            switch (requestNumber) {
+            switch (Integer.parseInt(scanner.nextLine())) {
                 case 1:
                     System.out.println("All user's names and surnames:");
                     List<String> users = userService.getAllUsers();
@@ -61,6 +63,10 @@ public class ConsoleApplication {
                     System.out.println("The user was deleted.");
                     break;
                 case 6:
+                    userService.loadUsers();
+                    System.out.println("Users from file were added to current collection.");
+                    break;
+                case 7:
                     System.out.println("Saving users to file.");
                     userService.saveUsers();
                     scanner.close();
