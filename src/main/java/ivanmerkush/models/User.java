@@ -1,4 +1,4 @@
-package ivanmerkush.model;
+package ivanmerkush.models;
 
 import java.io.Serializable;
 import java.util.List;
@@ -10,7 +10,7 @@ public class User implements Serializable {
     private String surname;
     private String email;
     private Roles roles;
-    private List<String> phoneNumbers;
+    private List<String> phones;
 
     public User() {
 
@@ -21,7 +21,7 @@ public class User implements Serializable {
         this.surname = surname;
         this.email = email;
         this.roles = roles;
-        this.phoneNumbers = phoneNumbers;
+        this.phones = phoneNumbers;
     }
 
     public String getName() {
@@ -56,12 +56,12 @@ public class User implements Serializable {
         this.email = email;
     }
 
-    public List<String> getPhoneNumbers() {
-        return phoneNumbers;
+    public List<String> getPhones() {
+        return phones;
     }
 
-    public void setPhoneNumbers(List<String> phoneNumbers) {
-        this.phoneNumbers = phoneNumbers;
+    public void setPhones(List<String> phones) {
+        this.phones = phones;
     }
 
     @Override
@@ -71,7 +71,7 @@ public class User implements Serializable {
                 ";\n2)Surname - " + surname  +
                 ";\n3)Email - " + email  +
                 ";\n4)" + roles.toString() +
-                ";\n5)Phone numbers - " + phoneNumbers.toString() +
+                ";\n5)Phone numbers - " + phones.toString() +
                 ";\n=================================\n";
     }
 
@@ -80,11 +80,11 @@ public class User implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return name.equals(user.name) && surname.equals(user.surname) && email.equals(user.email) && roles.equals(user.roles) && phoneNumbers.equals(user.phoneNumbers);
+        return name.equals(user.name) && surname.equals(user.surname) && email.equals(user.email) && roles.equals(user.roles) && phones.equals(user.phones);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, surname, email, roles, phoneNumbers);
+        return Objects.hash(name, surname, email, roles, phones);
     }
 }

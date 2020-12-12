@@ -1,138 +1,89 @@
-package ivanmerkush.service.impl;
+package ivanmerkush.controllers.extended;
 
-import ivanmerkush.model.Role;
-import ivanmerkush.model.Roles;
-import ivanmerkush.model.User;
-import ivanmerkush.service.FileService;
-import ivanmerkush.service.UserService;
+import ivanmerkush.controllers.Controller;
+import ivanmerkush.models.Role;
+import ivanmerkush.models.Roles;
+import ivanmerkush.models.User;
+import ivanmerkush.services.FileService;
+import ivanmerkush.services.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
-public class UserServiceImpl implements UserService {
+public class ConsoleController extends Controller {
+    private final Scanner scanner = new Scanner(System.in);
 
-    private List<User> users;
-    private FileService fileService;
+    public ConsoleController(FileService fileService, UserService userService) {
 
-    private final Scanner scanner;
-    private final Pattern emailPattern;
-    private final Pattern phonePattern;
-    private UserServiceImpl() {
-        users = new ArrayList<>();
-        setFileService(FileServiceImpl.getInstance());
-        scanner = new Scanner(System.in);
-        emailPattern = Pattern.compile("^(.+)+@(.+)+\\.(.+)$");
-        phonePattern = Pattern.compile("^(375)+\\d{9}");
+        super(fileService, userService);
     }
 
-
-
-    private static class UserServiceHolder {
-        private static final UserServiceImpl instance = new UserServiceImpl();
-
+    @Override
+    public List<User> findAllUsers() {
+        return userService.getAllUsers();
     }
 
-    public static UserServiceImpl getInstance() {
-        return UserServiceHolder.instance;
-    }
-
-    public List<User> getUsers() {
-        return users;
+    @Override
+    public User findUser() {
+        String[] name = inputNameSurname();
+        return userService.getUserByNameAndSurname(name[0], name[1]);
     }
 
     @Override
     public User createUser() {
-        String name;
-        String surname;
-        String email;
-        Roles roles;
-        List<String> phoneNumbers;
-
-        System.out.println("Enter name:");
-        name = scanner.nextLine();
-        System.out.println("Enter surname:");
-        surname = scanner.nextLine();
-        System.out.println("Enter new email:");
-        email = inputEmail();
-        roles = inputRoles();
-        phoneNumbers = inputPhones();
-        User user = new User(name, surname, email, roles,phoneNumbers);
-        users.add(user);
-        return user;
+        String[] name = inputNameSurname();
+        String email = addEmail();
+        Roles roles = addRoles();
+        List<String> phones = addPhones();
+        System.out.println("User created:");
+        return userService.createUser(name[0], name[1], email, roles, phones);
     }
 
     @Override
     public User editUser() {
-        System.out.println("Enter a name:");
-        String name = scanner.nextLine();
-        System.out.println("Enter a surname:");
-        String surname = scanner.nextLine();
-        User user = users.stream()
-                .filter(x -> x.getName().equals(name) && x.getSurname().equals(surname))
-                .findFirst().orElse(null);
-        if (user != null) {
-            System.out.println(user.toString());
-            System.out.println("What would you like to change?");
-            changingValues(user);
-        }
-        return user;
+        User user = findUser();
+        int index = userService.getAllUsers().indexOf(user);
+        System.out.println(user);
+        System.out.println("What would you like to change?");
+        int number = Integer.parseInt(scanner.nextLine());
+        return editValues(number, user, index);
     }
 
     @Override
     public void deleteUser() {
-        System.out.println("Enter a name:");
-        String name = scanner.nextLine();
-        System.out.println("Enter a surname:");
-        String surname = scanner.nextLine();
-        users = users.stream()
-                .filter(x -> !(x.getName().equals(name) && x.getSurname().equals(surname)))
-                .collect(Collectors.toList());
+        String[] name = inputNameSurname();
+        userService.deleteUser(name[0], name[1]);
+        System.out.println("User deleted");
     }
 
     @Override
-    public User getUserInfo() {
-        System.out.println("Enter a name:");
-        String name = scanner.nextLine();
-        System.out.println("Enter a surname:");
-        String surname = scanner.nextLine();
-        return users.stream()
-                .filter(x -> x.getName().equals(name) && x.getSurname().equals(surname))
-                .findFirst().orElse(null);
-    }
-
-    @Override
-    public List<String> getAllUsers() {
-        List<String> names = new ArrayList<>();
-        users.forEach(x -> names.add(x.getName().concat(" ").concat(x.getSurname())));
-        return names;
+    public List<User> loadUsers() {
+        userService.setUsers(fileService.read());
+        return findAllUsers();
     }
 
     @Override
     public void saveUsers() {
-        fileService.write(users);
+        fileService.write(userService.getAllUsers());
     }
 
-    @Override
-    public void loadUsers() {
-        users.addAll(fileService.read());
+    private String[] inputNameSurname() {
+        String[] result = new String[2];
+        System.out.println("Enter name:");
+        result[0] = scanner.nextLine();
+        System.out.println("Enter surname:");
+        result[1] = scanner.nextLine();
+        return result;
     }
 
-    public void setFileService(FileService fileService) {
-        this.fileService = fileService;
-    }
+    public User editValues(int number, User user,int index) {
 
-
-    private void changingValues(User user) {
-        int number = Integer.parseInt(scanner.nextLine());
         switch (number) {
             case 1:
                 System.out.println("Enter new name:");
-                String name = scanner.nextLine();
-                user.setName(name);
+                user.setName(scanner.nextLine());
                 break;
             case 2:
                 System.out.println("Enter new surname:");
@@ -141,32 +92,26 @@ public class UserServiceImpl implements UserService {
                 break;
             case 3:
                 System.out.println("Enter new email: ");
-                user.setEmail(inputEmail());
+                user.setEmail(addEmail());
                 break;
             case 4:
-                Roles roles = inputRoles();
+                Roles roles = addRoles();
                 user.setRoles(roles);
                 break;
             case 5:
-                List<String> phones = inputPhones();
-                user.setPhoneNumbers(phones);
+                List<String> phones = addPhones();
+                user.setPhones(phones);
                 break;
             default:
                 System.out.println("Nothing will change.");
-                break;
+                return user;
         }
+        userService.editUser(user, index);
+        System.out.println("User edited.");
+        return user;
     }
 
-    private String inputEmail() {
-        Matcher emailMatcher = emailPattern.matcher(scanner.nextLine());
-        while (!emailMatcher.matches()) {
-            System.out.println("Wrong email. Try again:");
-            emailMatcher = emailPattern.matcher(scanner.nextLine());
-        }
-        return emailMatcher.group();
-    }
-
-    private Roles inputRoles() {
+    public Roles addRoles() {
         Roles roles = new Roles();
         System.out.println("Choose roles. Type \"Enough\" to stop:");
         System.out.println("1)USER;\n" +
@@ -250,7 +195,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private List<String> inputPhones() {
+    private List<String> addPhones() {
         List<String> phoneNumbers = new ArrayList<>();
         System.out.println("Enter new phone numbers. Type \"Enough\" to stop:");
         for(int i = 0; i < 3;) {
@@ -277,6 +222,16 @@ public class UserServiceImpl implements UserService {
         return phoneNumbers;
     }
 
+    private String addEmail() {
+        System.out.println("Enter new email:");
+        Matcher emailMatcher = emailPattern.matcher(scanner.nextLine());
+        while (!emailMatcher.matches()) {
+            System.out.println("Wrong email. Try again:");
+            emailMatcher = emailPattern.matcher(scanner.nextLine());
+        }
+        return emailMatcher.group();
+    }
 
 
 }
+

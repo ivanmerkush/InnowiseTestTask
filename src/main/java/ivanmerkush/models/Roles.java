@@ -1,4 +1,4 @@
-package ivanmerkush.model;
+package ivanmerkush.models;
 
 import java.io.Serializable;
 
