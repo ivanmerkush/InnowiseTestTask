@@ -10,16 +10,9 @@ import java.util.List;
 public class FileServiceImpl implements FileService {
     private final File file;
 
-    private FileServiceImpl() {
+    public FileServiceImpl() {
         this.file = new File(PATH_TO_FILE);
     }
-
-    private static class FileServiceHolder {
-        private static final FileServiceImpl instance = new FileServiceImpl();
-
-    }
-
-    public static FileServiceImpl getInstance() { return FileServiceHolder.instance; }
 
     @Override
     public void write(List<User> users) {

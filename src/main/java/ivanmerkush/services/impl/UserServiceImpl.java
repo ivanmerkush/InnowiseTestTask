@@ -2,27 +2,21 @@ package ivanmerkush.services.impl;
 
 import ivanmerkush.models.Roles;
 import ivanmerkush.models.User;
+import ivanmerkush.services.FileService;
 import ivanmerkush.services.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class UserServiceImpl implements UserService {
     private List<User> users;
 
-    private UserServiceImpl() {
+    public UserServiceImpl() {
         users = new ArrayList<>();
     }
 
-    private static class UserServiceHolder {
-        private static final UserServiceImpl instance = new UserServiceImpl();
-
-    }
-
-    public static UserServiceImpl getInstance() {
-        return UserServiceHolder.instance;
-    }
 
     @Override
     public User createUser(String name, String surname, String email, Roles roles, List<String> phones) {
@@ -32,8 +26,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void editUser(User user, int index) {
+    public User editUser(int index, User user) {
         users.set(index, user);
+        return user;
     }
 
     @Override

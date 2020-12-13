@@ -1,20 +1,23 @@
 package ivanmerkush.commands;
 
-import ivanmerkush.controllers.Controller;
-import ivanmerkush.models.User;
+import ivanmerkush.services.UserService;
 import ivanmerkush.views.View;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class DeleteCommand extends Command{
 
-    public DeleteCommand(View view, Controller controller) {
-        super(view, controller);
+    public DeleteCommand(View view, UserService userService) {
+        super(view, userService);
     }
+
+    public void deleteUser() {
+        String[] name = inputNameSurname();
+        userService.deleteUser(name[0], name[1]);
+        view.print("User deleted");
+    }
+
     @Override
-    public List<User> execute() {
-        controller.deleteUser();
-        return new ArrayList<>();
+    public void execute() {
+        deleteUser();
     }
 }

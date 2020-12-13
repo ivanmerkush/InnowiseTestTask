@@ -1,22 +1,26 @@
 package ivanmerkush.commands;
 
-import ivanmerkush.controllers.Controller;
 import ivanmerkush.models.User;
+import ivanmerkush.services.UserService;
 import ivanmerkush.views.View;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class GetCommand extends Command{
 
-    public GetCommand(View view, Controller controller) {
-        super(view, controller);
+    public GetCommand(View view, UserService userService) {
+        super(view, userService);
     }
 
     @Override
-    public List<User> execute() {
-        return new ArrayList<User>() {{
-            add(controller.findUser());
-        }};
+    public void execute() {
+        String[] name = inputNameSurname();
+        User user = userService.getUserByNameAndSurname(name[0], name[1]);
+        if(user != null) {
+            view.print("User's info:");
+            view.printUser(user);
+        }
+        else {
+            view.print("User doesn't exist");
+        }
     }
 }

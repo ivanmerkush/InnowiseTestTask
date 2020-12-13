@@ -1,19 +1,21 @@
 package ivanmerkush.commands;
 
-import ivanmerkush.controllers.Controller;
 import ivanmerkush.models.User;
+import ivanmerkush.services.UserService;
 import ivanmerkush.views.View;
 
-import java.util.List;
 
 public class GetAllCommand extends Command{
 
-    public GetAllCommand(View view, Controller controller) {
-        super(view, controller);
+    public GetAllCommand(View view, UserService userService) {
+        super(view, userService);
     }
 
     @Override
-    public List<User> execute() {
-        return controller.findAllUsers();
+    public void execute() {
+        view.print("All users:");
+        for(User i: userService.getAllUsers()) {
+            view.printUser(i);
+        }
     }
 }

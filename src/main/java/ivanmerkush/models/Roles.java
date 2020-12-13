@@ -12,7 +12,9 @@ public class Roles implements Serializable {
     }
 
     public void setFirstRole(Role firstRole) {
-        this.firstRole = firstRole;
+        if(this.firstRole == null) {
+            this.firstRole = firstRole;
+        }
     }
 
     public Role getSecondRole() {
@@ -20,7 +22,9 @@ public class Roles implements Serializable {
     }
 
     public void setSecondRole(Role secondRole) {
-        this.secondRole = secondRole;
+        if(this.secondRole == null) {
+            this.secondRole = secondRole;
+        }
     }
 
     public Role getThirdRole() {
@@ -28,7 +32,9 @@ public class Roles implements Serializable {
     }
 
     public void setThirdRole(Role thirdRole) {
-        this.thirdRole = thirdRole;
+        if(this.firstRole == null && this.secondRole == null) {
+            this.thirdRole = thirdRole;
+        }
     }
 
     @Override

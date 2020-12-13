@@ -3,43 +3,41 @@ package ivanmerkush.views.extended;
 import ivanmerkush.commands.*;
 import ivanmerkush.models.User;
 import ivanmerkush.views.View;
-import ivanmerkush.controllers.extended.ConsoleController;
 import ivanmerkush.services.impl.FileServiceImpl;
 import ivanmerkush.services.impl.UserServiceImpl;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Scanner;
 
 public class ConsoleView extends View {
 
+    private final Scanner scanner;
+
     public ConsoleView() {
         super();
-        controller = new ConsoleController(FileServiceImpl.getInstance(), UserServiceImpl.getInstance());
+        scanner = new Scanner(System.in);
+        userService = new UserServiceImpl();
         commands = new HashMap<>(7, 1.1f);
-        commands.put(1, new GetAllCommand(this, controller));
-        commands.put(2, new GetCommand(this, controller));
-        commands.put(3, new CreateCommand(this, controller));
-        commands.put(4, new EditCommand(this, controller));
-        commands.put(5, new DeleteCommand(this, controller));
-        commands.put(6, new LoadCommand(this, controller));
-        commands.put(7, new SaveCommand(this, controller));
-        commands.put(8, new QuitCommand(this, controller));
+        commands.put(1, new GetAllCommand(this, userService));
+        commands.put(2, new GetCommand(this, userService));
+        commands.put(3, new CreateCommand(this, userService));
+        commands.put(4, new EditCommand(this, userService));
+        commands.put(5, new DeleteCommand(this, userService));
+        commands.put(6, new LoadCommand(this, userService, new FileServiceImpl()));
+        commands.put(7, new SaveCommand(this, userService, new FileServiceImpl()));
+        commands.put(8, new QuitCommand(this, userService));
+    }
+
+    @Override
+    public String read() {
+        return scanner.nextLine();
     }
 
     public void start() {
-        Scanner scanner = new Scanner(System.in);
         while (true) {
             printCommands();
             int number = Integer.parseInt(scanner.nextLine());
-            List<User> users = commands.get(number).execute();
-            if (!users.isEmpty()) {
-                System.out.println("Result:\n");
-                for (User i : users) {
-                    System.out.println(i);
-                }
-            }
-
+            commands.get(number).execute();
         }
     }
 
@@ -57,4 +55,13 @@ public class ConsoleView extends View {
                     "\n=================================\n");
     }
 
+    @Override
+    public void print(String text) {
+        System.out.println(text);
+    }
+
+    @Override
+    public void printUser(User user) {
+        System.out.println(user);
+    }
 }
