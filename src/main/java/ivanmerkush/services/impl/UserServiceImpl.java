@@ -2,12 +2,10 @@ package ivanmerkush.services.impl;
 
 import ivanmerkush.models.Roles;
 import ivanmerkush.models.User;
-import ivanmerkush.services.FileService;
 import ivanmerkush.services.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class UserServiceImpl implements UserService {
